@@ -1,0 +1,4 @@
+*.avi
+*.mp4
+yolo-obj_18000.weights
+yolo-obj_14000.weights
