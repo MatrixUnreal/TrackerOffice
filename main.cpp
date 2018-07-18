@@ -213,7 +213,7 @@ void runCam(Camera camera, std::shared_ptr<ThreadSafeDetector> detector)
 	std::cout<<camera.getPath()<<std::endl;
 
 	bool isJustStartWriteVideo=false;
-
+	CTracker tracker(true, kalmanStep, accelNoise, distThresh, skipFrames, maxTraceLength);
 	while(true)
 	{
 		camera.getFrame();
@@ -222,11 +222,18 @@ void runCam(Camera camera, std::shared_ptr<ThreadSafeDetector> detector)
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		if(!camera.frame.empty())
 		boxes = detector->detect(camera.frame);
-		/*
+		
 		for(auto box:boxes)				
 			v_rect.push_back(cv::Rect(box.x,box.y,box.w,box.h));
-		*/
+		
 		//camera.setDrawRectangles(v_rect);
+
+		std::vector<PersonDetect> detects = getDetects(boxes, camera.frame);
+		Mat grayFrame;
+		cv::cvtColor(camera.frame, grayFrame, cv::COLOR_BGR2GRAY);
+		tracker.Update(0,detects,CTracker::RectsDist,grayFrame);	
+		
+
 
 		//if((faceDetector.getFaces(camera[numCamera].frame)).size()!=0)std::cout<<",";	
 		if(camera.move_detect(70) )
