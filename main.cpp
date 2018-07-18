@@ -21,7 +21,7 @@ using namespace std;
 using namespace cv;
 
 int maxDuration=80;	
-/*
+
 std::vector<cv::Rect> getFaces(const cv::Mat& image)
 {
 	std::mutex faceDetectorMutex;
@@ -205,7 +205,7 @@ std::vector<PersonDetect> getDetects(const std::vector<bbox_t>& boxes, const cv:
 	}
 	return detects;
 }
-*/
+
 void runCam(Camera camera, std::shared_ptr<ThreadSafeDetector> detector)
 {
 	//printf("PID of this process: %d\n", getpid());
@@ -217,13 +217,12 @@ void runCam(Camera camera, std::shared_ptr<ThreadSafeDetector> detector)
 	while(true)
 	{
 		camera.getFrame();
-		/*std::vector<bbox_t>boxes;
+		std::vector<bbox_t>boxes;
 		std::vector<cv::Rect>v_rect;
-		camera.getFrame();
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		if(!camera.frame.empty())
 		boxes = detector->detect(camera.frame);
-		
+		/*
 		for(auto box:boxes)				
 			v_rect.push_back(cv::Rect(box.x,box.y,box.w,box.h));
 		*/
@@ -311,71 +310,3 @@ int main() {
 	delete [] camera;
 	return 0;
 }
-
-
-/*
-//Camera camera1("rtsp://admin:startup123@192.168.1.220:554/Streaming/Channels/102/");
-Camera camera2("rtsp://admin:startup123@192.168.1.222:554/Streaming/Channels/102/");
-Camera camera1("rtsp://admin:admin@192.168.90.169:554/MPEG-4/ch12/main/av_stream");
-
-//int maxDuration=80;	
-
-
-int main() {
-
-	bool isJustStartWriteVideo=false;
-	std::string faceCascadeName = "haarcascade_frontalface_alt2.xml";
-	std::shared_ptr<ThreadSafeDetector> detector =
-		std::make_shared<ThreadSafeDetector>(DARKNET_CONFIG_PATH, DARKNET_WEIGHTS_PATH, 0);
-	
-	camera1.setNameVideoCamName("cam1");
-	camera2.setNameVideoCamName("cam2");
-	
-	CTracker tracker(true, kalmanStep, accelNoise, distThresh, skipFrames, maxTraceLength);
-	
-	std::cout << "Start program" << std::endl;
-	
-	while (true) {
-		
-		camera1.getFrame();	
-		if(camera1.frame.empty())
-		{
-			auto boxes = detector->detect(camera1.frame);
-			std::vector<PersonDetect> detects = getDetects(boxes, camera1.frame);
-	
-			Mat grayFrame;
-			cv::cvtColor(camera1.frame, grayFrame, cv::COLOR_BGR2GRAY);
-			tracker.Update(0,detects,CTracker::RectsDist,grayFrame);
-	
-			if(camera1.move_detect(70) )
-			{
-				if(!isJustStartWriteVideo)
-				{
-					camera1.setTimer();
-				}
-				isJustStartWriteVideo=true;
-				camera1.startWrite();
-				camera1.setDuration(maxDuration);	
-			}
-			if(!camera1.getDuration() || camera1.isTimeUp())
-			{			
-				isJustStartWriteVideo=false;
-				camera1.stopWrite();
-			}
-			else camera1.duration--;
-		}
-		//camera2.getFrame();		
-		//if(camera2.move_detect(70) )
-		//	{
-		//		camera2.canWrite=true;
-		//		camera2.duration=maxDuration;				
-		//	}
-		//if(!camera2.duration)
-		//{			
-		//	camera2.canWrite=false;
-		//}
-		//else camera2.duration--;
-       
-	}
-	return 0;
-}*/
