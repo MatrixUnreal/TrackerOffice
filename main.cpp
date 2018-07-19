@@ -226,13 +226,30 @@ void runCam(Camera camera, std::shared_ptr<ThreadSafeDetector> detector)
 		for(auto box:boxes)				
 			v_rect.push_back(cv::Rect(box.x,box.y,box.w,box.h));
 		
-		//camera.setDrawRectangles(v_rect);
+		camera.setDrawRectangles(v_rect);
 
 		std::vector<PersonDetect> detects = getDetects(boxes, camera.frame);
 		Mat grayFrame;
 		cv::cvtColor(camera.frame, grayFrame, cv::COLOR_BGR2GRAY);
 		tracker.Update(0,detects,CTracker::RectsDist,grayFrame);	
 		
+
+		for (const auto& track : tracker.tracks)
+		{			
+			auto it = track->detects.begin();
+			while (it != track->detects.end() )
+			{
+				if (std::next(it) != track->detects.end() )
+				{
+					cv::Point p1 = it->second.getPoint();
+					cv::Point p2 = std::next(it)->second.getPoint();
+					//std::cout<<"|";
+					camera.setDrawLine(p1,p2);
+				}
+				it++;
+			}
+		}
+
 
 
 		//if((faceDetector.getFaces(camera[numCamera].frame)).size()!=0)std::cout<<",";	

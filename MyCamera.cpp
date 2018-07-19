@@ -147,6 +147,9 @@ bool Camera::getFrame()
 				 srand ( time(NULL) );
 				for(auto rect:rects)
 				cv::rectangle(this->frame, rect, cv::Scalar((rand() % 255) ,(rand() % 255),(rand() % 255)), 1, LINE_8, 0 );
+				for(auto line_one:lines)
+				cv::line(this->frame, line_one.p1, line_one.p2, cv::Scalar(0,255,0), 2);
+				rects.clear();lines.clear();
 				this->video.write(this->frame);
 			}
 		}
@@ -409,4 +412,9 @@ bool Camera::isTimeUp()
 void Camera::resetTimer()
 {
 	this->currentCountOfTimer=0;
+}
+
+void Camera::setDrawLine(cv::Point p1,cv::Point p2)
+{
+	this->lines.push_back(Camera::LineOne(p1,p2));
 }

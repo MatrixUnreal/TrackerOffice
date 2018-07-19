@@ -20,6 +20,17 @@ class Camera
 public:
 	const int maxDurationVideo=40;
 	cv::Mat frame,lastframe;
+	struct LineOne
+	{
+		cv::Point p1;
+		cv::Point p2;
+		LineOne();
+		LineOne(cv::Point p1,cv::Point p2)
+		{
+			this->p1=p1;this->p2=p2;
+		}
+	};
+
 	struct Config
 	{
 		std::string camId;
@@ -56,14 +67,17 @@ public:
 	cv::String getNameVideoCab();
 	int duration=0;	
 	void setDrawRectangles(std::vector<cv::Rect> input );
+	void setDrawLine(cv::Point p1,cv::Point p2);
 	void setConfig(Config input);
 	void setTimer();
 	bool isTimeUp();
 	void resetTimer();
 
+
 private:	
 	int maxBadFrame=5;
 	std::vector<cv::Rect> rects;
+	std::vector<LineOne> lines;
 	bool canWrite = false;
 	cv::String path;
 	cv::String nameVideoFolder="Video/";
